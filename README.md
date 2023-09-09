@@ -1,0 +1,1 @@
+# curso-scope-clousures-platzi
