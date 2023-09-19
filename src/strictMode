@@ -1,0 +1,44 @@
+EL STRICT MODE ES ALGO QUE PODEMOS HABILITAR DENTRO DE BLOQUES DE CODIGO PARA HACER UN
+
+CODIGO ESTRICTO
+
+ESTO SE REFIERE A QUE TENEMOS QUE RESPETAR EL ORDEN DE 
+DECLARAR Y ASIGNAR VARIABLES SI O SI.
+
+SI LO ACTIVAMOS
+
+
+
+
+///////////////////////////////////////////////////////
+DESACTIVADO
+function funcion () {
+pi = 3.1416;
+console.log(pi)
+}
+
+PODREMOS ASIGNAR LA VARIABLE SIN ANTES DECLARARLA
+Y FUNCIONA
+
+
+
+
+
+
+///////////////////////////////////////////////////////
+ACTIVADO
+function funcion () {
+"use strict"
+pi = 3.1416;
+console.log(pi)
+}			ERROR
+
+
+
+SI ACTIVAMOS "use strict" TENDREMOS QUE DECLARAR LA VARIABLE Y LUEGO ASIGNARLA SI O SI
+
+ASI : var pi = 3.1416;
+
+
+
+///////////////////////////////////////////////////////

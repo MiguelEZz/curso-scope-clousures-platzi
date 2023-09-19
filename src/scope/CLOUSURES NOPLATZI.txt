@@ -1,0 +1,1288 @@
+CLOUSURES - NOPLATZI
+
+clousure es cuando un entorno lexico interior puede acceder a variables de un entorno lexico exterior.
+generalmente se usa con funciones y sus entornos lexico
+
+
+NO HAY UNA REGLA QUE DIGA, CUANDO DEVEMOS USAR UN CLOUSURE, ESTÁ EN NOSTROS DARNOS CUENTA CUANDO ESTARIA BUENO USAR UN CLOUSURE, Y CUANDO SERIA UTIL O NO.
+SE VEN MAS ELEGANTES O MEJOR ESCRITO, ES UN PATRON QUE TENEMOS QUE INCORPORAR
+
+CUANDO NOTEMOS UNA REPETICION DE CODIGO ES BUEN MOMENTO DE IMPLEMENTAR CLOUSURES. 
+..............................
+
+
+PARA CREAR UNA CLOUSURE
+
+-una funcion que este dentro de otra funcion(funcion anidada)
+-una variable que este dentro de la funcion mas grande que
+ la funcion pequeña use de alguna manera.
+-invocar a la funcion pequeña no desde el scope desde donde está escrita, sino desde otro escope(global)
+
+
+al igual que podemos
+
+------------------------
+FUNCIONES.
+	podemos asignarlas a una variable
+	pasarlas por parametro
+	hacer que una funcion nos retorne otra funcion nueva.
+	
+	
+(ESTAS ELIMINAN SUS DATOS, CUANDO TERMINAN DE EJECUTARSE[cuando llegan al return])
+
+
+------------------------
+
+GRACIAS A PODER RETORNAR OTRAS FUNCIONES, PODEMOS EJECUTAR A LA FUNCION GRANDE, Y ESTA NOS VA A RETORNAR LA FUNCION MAS PEQUEÑA Y
+	GUARDARLA DENTRO DE UNA VARIABLE PARA USARLA DESPUES.
+	
+	
+	/al guardarla dentro de una variable hacemos que esta
+	variable guarde el ambiente lexico, y referencias
+	en memoria que pertenecian a la funcion que esta 
+	guardando
+		const variableFunc = funcion();
+	
+	/esta viariable no guarda el return de la funcion 
+	pequeña, sino que guarda a  la funcion mas pequeña,
+	y luego la podemos ejecutar la funcion pequeña.
+#recordar que retorna la funcion pequeña + variables fuera
+del entorno que la funcion pequeña haya usado.
+		variableFunc()
+
+
+"RECORDAR" DATOS.
+	///las funciones cuando terminan su ejecucion (cuando 
+	llegan al return), eliminan su entorno lexico para 
+	ahorrar espacios en memoria. podemos evitarlo:
+	
+	-variableFunc, guarda el entorno lexico de la funcion
+	que se le asigno.
+	por eso, al terminar de ejecutarse la funcion, no 
+	elimina sus datos, sino que esta variable los guarda
+	como referencia en memoria.
+	y luego podremos modificar esta variable sin 
+	problemas, su valor no va a cambiar.
+	
+	-el clousure.
+	cuando la funcion mas grande llega al return, borra 
+	sus datos, pero como la funcion pequeña usa alguno
+	de sus datos, crea una referencia de memoria de las 
+	variables de la funcion grande, "recuerda", y los 
+	puede modificar.
+	A ESTO LE LLAMAMOS CLOUSURE
+	AHORA LA FUNCION PEQUEÑA USA UNA VARIABLE DEL 
+	ENTORNO LEXICO DE LA FUNCION GRANDE.
+	
+
+
+
+EJEMPLO:
+cuando creamos una funcion como:
+
+function crearContador(){
+
+let contador = 0;
+return function incrementar(){
+	contador++;
+	return contador;
+ };
+}
+
+const contador1 = crearContador();
+
+
+	----------------------
+	aqui hay un clousure
+	la funcion pequeña al usar datos de la funcion grande
+	se vincula a esta fuertemente.
+	
+	por eso:
+	
+	cuando la funcion grande hace RETURN:
+	
+	let contador = 0;
+	return function incrementar(){
+		contador++;
+		return contador;
+	 };
+	}
+	
+	retorna la funcion + los valores fuera de esta que
+			     son usados.
+			     
+	----------------------
+	
+	Y LA FUNCION PEQUEÑA TIENE UN ACCESO DIRECTO
+	AL VALOR ACTUAL DE LAS VARIABLES QUE ESTE
+	USANDO DE LA FUNCION GRANDE.
+	
+	osea que la funcion no toma un primer valor
+	que haya tenido la variable.
+	sino que tiene el valor actual que esta tiene
+	
+	si se le aplica un cambio externo
+	
+	la funcion pequeña va a tener a la variable
+	con el cambio aplicado
+	
+	-----------------------
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------
+
+
+
+
+
+function crearContador(){
+
+let contador = 0;
+return function incrementar(){
+	contador++;
+	return contador;
+ };
+}
+
+const contador1 = crearContador();
+contador1()		//consola: 1
+contador1()		//consola: 2
+contador1()		//consola: 3
+
+
+
+------------------------
+QUE PASA SI LLAMAMOS A LA FUNCION crearContador(), PARA CREARNOS OTRO CONTADOR, CON OTRA VARIABLE?
+
+const contador2 = crearContador();
+contador1()		
+contador1()		
+contador1()		
+
+
+
+
+
+
+
+¿QUE VALOR VA A TENER EL NUEVO CONTADOR, Y AL VIEJO, QUE LE VA A PASAR?
+
+para responder tenemos que entender:
+-------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+::
+
+
+
+
+
+
+LAS CLAUSURAS NO SOLO TIENEN QUE VER CON LOS SCOPES SINO TAMBIEN CON LOS DISTINTOS CONTEXTOS DE EJECUCION
+QUE SE CREAN CADA VEZ QUE SE EJECUTA UNA FUNCION
+
+
+
+SCOPE >	   CLOUSURA	< CONTEXTO DE EJECUCION
+
+
+
+
+------------------------
+I. CONTEXTOS DE EJECUCION
+
+	tenemos que ver que sucede en la pila de ejecucion
+	especialmente con los entornos lexicos
+	
+	TODO CONTEXTO DE EJECUCION TIENE ESTAS PARTES
+	-Fase de creacion
+	-entorno lexico
+	
+	
+	
+	
+	
+	PILA DE EJECUCION
+	1-
+	
+cuando js empieza a ejecutar nuestro programa lo primero que hace es crear el contexto de ejecucion inicial
+Para ello crea el primer registro de la pila de ejecucion
+
+
+asociado a la funcion 	|		|
+que engloba a todo	|		|
+el programa		|		|
+			|		|
+			|		|
+			|		|
+			|     GLOBAL	|
+			-----------------
+
+
+
+
+
+	2-
+TODO CONTEXTO DE EJCUCION PASA POR DOS FASES
+
+
+
+
+
+
+FASE DE CREACION
+
+	donde se carga en mememoria todo lo necesario para
+	ejecutar esa funcion, en esta etapa se inicializa
+	el registro con cierta info.
+		_archivo al que pertenece
+		_puntero de la proxima linea de 
+		codigo a ejecutar    //global:1
+		_para el primer registro se crea el objeto
+		global  //navegadores == window
+		_se cuelga el valor que va a tener this: 
+		dentro de la funcion  
+		//this:window  en modo "no estricto"
+		_se asocia el contexto de ejecucion que se
+		esta creando, con el codigo que se va a 
+		ejecutars
+
+
+
+
+
+
+
+
+
+
+SE CREA EL ENTRONO LEXICO
+
+Es un objeto que tienen todos los contextos de ejecucion donde se almacenan los nombres de las variables que existen dentro de una funcion y los vlores actuales que tienen.
+
+
+ ____________________
+|ENTORNO LEXICO  ext:|
+|____________________|		/REGISTRO DE ENTORNO
+|llave    |  valor   |		(renvironment record)
+|nombre	  |  "niko"  |
+|saludo	  |  fn(){..}|
+|_________|__________|
+	
+
+#cuando se hace algun cambio a una variable, este cambio se ve directamente reflejado aqui
+
+
+
+
+a)
+Y SI, LAS FUNCIONES, OBJETOS Y ARRAY EN VERDAD SE GUARDAN COMO REFERENCIAS O PUNTEROS A LAS POSICIONES DE MEMORIA DONDE REALMENTE ESTAN
+
+...
+|saludo	  | <EF72X>  |
+|_________|__________|
+
+
+
+
+b)
+TODAS LAS KEYS, TIENEN QUE SER DIFERENTES, 
+NO PUEDEN HABER NORBRES IGUALES, (NO HAY VARIABLES CON EL MISMO NOMBRE)
+
+
+
+
+c)
+CADA ENTORNO LEXICO CUENTA CON UN PUNTERO A SU ENTORNO LEXICO EXTERIOR (EL ENTRONO EN EL QUE ESTE FUE CREADO)
+
+ ____________________
+|ENTORNO LEXICO  ext:  <----  PUNTERO AL ENTORNO EXTERIOR
+|____________________|		
+|llave    |  valor   |	
+...
+
+
+
+
+
+
+DESPUES DE LA FASE DE CREACION VIENE LA FASE DE EJECUCIÓN
+DONSE SE EJECUTA EL CODIGO DE ARRIBA PARA ABAJO
+DE IZQUIERDA A DERECHA
+
+
+
+
+
+
+--------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   -------¿COMO SE EJECUTA ESTE PROCESO EN NUESTRO CODIGO?-----
+   
+   
+   
+   			//LA FUNCTION
+
+
+function crearContador(){
+
+let contador = 0;
+return function incrementar(){
+	contador++;
+	return contador;
+ };
+}
+
+const contador1 = crearContador();
+contador1();
+const contador2 = crearContador();
+contador2();
+   
+  
+  
+  
+  
+  
+  
+  
+  
+  
+I)	ENTORNO LEXICO DE GLOBAL
+
+
+CUANDO DECIMOS QUE UNA FUNCION AL EJECUTARSE CREA UN ESCOPE PARA SUS VARIABLES EN REALIDAD NOS REFERIMOS SOLO AL ENTORNO LEXICO
+
+
+
+					////FASE DE CREACION////
+
+1. cuando se ejecuta nuestra funcion GLOBAL 
+
+JS encuentra los 3 identificadores de variables
+
+ ___________________________
+|ENTORNO LEXICO  	ext:|
+|___________________________|		
+|crearContador   |  fn(){..}|	<-- cada fn(), es vinculada al 	
+|contador1	 |<no inicializada>|	entorno en el que se creo
+|contador2	 |<no inicializada>|	/esta al global
+|________________|__________|
+
+	#como fueron declaradas con const == <no inicializada>
+	#si ubieran sido declaradoas let == undefined
+	
+	
+	
+	/////
+	A ESTO SE LE CONOCE COMO HOISTING.
+	DARLES VALORES INICIALES A LAS VARIABLES Y CARGAR LAS
+	FUNCIONES EN MEMORIA JUSTO ANTES DE COMENZAR LA EJECUCION DE 
+	LA FUNCION.
+							/////////
+							
+
+
+
+2. SE CARGA EL PUNTERO EXTERIOR
+
+
+
+Finalmente se carga el puntero lexico hacia el entorno lexico exterior. al ser la funcion GLOBAL no tiene ningun puntero ya que es la primera funcion que se esta creando
+ ___________________________
+|ENTORNO LEXICO        ext:X|
+	
+	
+
+
+
+3. APILAR FUNCION GLOBAL EN LA PILA DE EJECUCION
+
+con todo lo necesario para ejecutar la  funcion se apila este registro en la pila de ejecucion y comienza la 
+FASE DE EJECUCION
+
+
+ 	|		|
+	|		|
+	|		|
+	|		|
+	|		|
+	|		|
+	|     GLOBAL	|
+	-----------------
+	
+	
+	
+					////FASE DE EJECUCION////
+	
+	
+	
+B)	 FASE DE EJECUCION
+
+En la fase de ejecucion js va a ejecutando sentencia por sentencia
+
+
+
+
+1.   EJECUTANDO LA FUNCION
+
+ las declaraciones  de funciones y variables le sirvieron en la fase anterior para crear el entorno lexico  con sus valores iniciales.
+PERO NO TIENE QUE EJECUTARLAS.
+
+
+function crearContador(){	  /ESTA FUNCION FUE DECLARADA
+let contador = 0;		   PERO NO TIENE QUE EJECUTARSE
+return function incrementar(){
+	contador++;
+	return contador;
+ };
+}
+
+const contador1 = crearContador();
+contador1();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+II.  EJECUTANDO LA ASIGNACIÓN DE VARIABLE
+
+
+//const contador1 = crearContador();
+Estamos asignando el resultado de ejecutar una función  [crearContador()]
+
+------------------
+------------------
+Y SABEMOS QUE HACE 
+JS CADA VEZ QUE SE ENCUENTRA CON UNA INVOCACION DE FUNCION
+
+
+ 	..Crea un nuevo contexto de ejecion para esta..
+ 	
+ 	
+ 	
+ DOS FASES__  CONTEXTO DE EJECUCION DE UNA FUNCION
+
+				////FASE DE CREACION////
+
+	_nombre del archivo que pertenece
+	_proxima linea a ejecutar
+	_valor inicial a this:window   "no estrict"
+	X no se crea un objeto global, pq no estamos en el global
+	_se crea  "arguments: {...}"  contiene todos los argumentos
+	que se le dio a la funcion al invocarla
+	
+	
+	
+	
+-entorno lexico
+
+a) Carga los identificadores y sus valores iniciales
+ ___________________________
+|ENTORNO LEXICO  	ext:|
+|___________________________|	
+|contador   |no inicializada|
+____________|________________
+
+
+
+	OJO:
+function crearContador(){	  
+ let contador = 0;		   
+return function incrementar(){
+	contador++;
+	return contador;
+ };
+}
+
+	//La funcion incrementar(), no se carga al entorno lexico
+	de esta funcion ya que no es un identificador que podriamos 
+	usar dentro de esta funcion no podiramos invocarla
+	porque no existe una funcion declarada con ese nombre.
+	
+	simplemente estamos retornando una funcion que tiene ese 
+	nombre pero no la estamos declarando
+	
+	
+	
+	
+	
+b) Entorno exterior
+
+Esta funcion si tiene un contexto de ejecucion exterior que es
+EL GLOBAL
+
+ ___________________________
+|ENTORNO LEXICO   ext:GLOBAL|
+|___________________________|	
+
+	ASI QUE QUEDAN DIRECTAMENTE CONECTADAS
+	
+	//si llamamos a una variable dentro de esta funcion
+	JS la buscará primero en el entorno de la funcion y si no lo 
+	encuentra  pasa a buscarlo  en el ENTORNO EXTERIOR
+	osea en el GLOBAL.
+	
+	y si no lo encuentra allí, y al ser GLOBAL el primer entorno
+	aparecerá el error 
+	ReferenceError: nombre is not defined
+	
+	asi es como funciona la cadena de scopes internamente la
+	busqueda se realiza hasta llegar al entorno lexico global
+	el final de la cadena
+	
+	
+	
+       //esto es un CLAUSURE
+       //YA QUE ESTAS CONECCIONES PERMITEN ACCEDER A VALORES DE 
+      //ENTORNOS EXTERIORES AUN ASI YA HAYAN TERMINADO DE EJECUTARSE
+	
+	
+	
+	
+
+FINALEMENTE SE APILA EN LA PILA DE EJECUCION
+	
+	
+	
+	
+	
+	
+					////FASE DE EJECUCION////
+				
+				
+
+function crearContador(){	  /ESTA FUNCION FUE DECLARADA
+let contador = 0;		   SE EJECUTA
+return function incrementar(){
+	contador++;
+	return contador;
+ };
+}
+
+
+
+
+	1-
+	
+///LET CONTADOR = 0
+
+ESTA ACTUALIZACION A LA VARIABLE SE HACE SOBRE EL ENTORNO LEXICO
+
+ ___________________________
+|ENTORNO LEXICO  	ext:|
+|___________________________|	
+|contador   |       0       |
+____________|_______________|
+			//el entorno lexico contiene el valor actual
+			de las variables
+
+
+
+
+
+	2-
+	
+///return function incrementar(){
+
+esta instruccion es un return de una funcion por eso:
+
+
+
+AL ESTAR RETORNANDO UNA FUNCION COMO SI FUERA CUALQUIER OTRO VALOR  
+JS CREA UNA NUEVA INSTANCIA DE ESTA FUNCION EN MEMORIA
+
+
+es como si creara un nuevo abjeto  
+
+MEMORY:
+fn incrementar(){...}  ext:crearContador()
+				↓
+		// pero al tratarse de una funcion, va a conectarla
+		al CONTEXTO EN EL QUE ESTA SIENDO CREADO
+		
+		↓
+::::::::::::::::::
+ESTA ES UNA CLAUSURA
+UNA FUNCION QUE PASAMOS DE ACA PARA ALLA COMO UNA VARIABLE MAS
+PERO QUE SIGUE CONECTADA AL ENTORNO LEXICO EN EL QUE FUE CREADA
+por ello puede acceder al entorno lexico del entorno al que esta conectado
+::::::::::::::::::
+
+
+				
+			
+AL LLEGAR AL RETURN LA FUNCION SALE DE LA PILA DE EJECUCION Y SE ELIMINAN DE MEMORIA SUS DATOS
+(pero con el clousure podremos acceder nuevamente a ellos desde la funcion a la que esta vinculada)
+
+
+
+
+
+
+
+
+CONTINUANDO CON LA ASIGNACION DE LA VARIABLE
+
+
+	const contador1 = crearContador();
+
+
+concluimos con que 
+A LA VARIABLE CONTADOR1 SE LE ASIGNA EL CLOUSURE DE CREAR CONTADOR
+(su return es la funcion incrementar(), aun sin ejecutarse, pero con clousure, o acceso al entorno exterior al que esta conectado)
+
+
+
+Y ESTA ASIGNACION SE REALIZA EN EL ENTORNO LEXICO GLOBAL
+
+ ___________________________
+|ENTORNO LEXICO  	ext:|
+|___________________________|		
+|crearContador   | fn(){..} | ➪ ext:Global
+|contador1	 | fn(){..} | ➪ ext:crearContador()
+|contador2	 |<no inicializada>|	
+|________________|__________|
+
+
+ahora el valor de contador1 es la funcion incrementar()
+
+
+
+				
+
+
+////////////////////////////////////
+EL COSO CON LOS CLOUSURES, ES QUE APESAR QUE CREARCONTADOR() SALIO DE LA PILA DE EJECUCION
+LA FUNCION QUE RETORNAMOS (INCREMENTAR()) Y QUE ALMACENAMOS EN NUESTRA VARIABLE IGUAL VA A SEGUIR VINCULADA AL ENTORNO LEXICO EN EL QUE FUE CREADA
+(CREARCONTADOR()) Y VA A PODER SEGUIR ACCEDIENDOLO TRANQUILAMENTE
+PORQUE EL CLOUSURE TIENE ESTA ABILIDAD DE "RECORDAR"
+				/////////////////////////////////////////////
+
+
+
+
+
+					////TERMINA FASE DE EJECUCION////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+III. SE EJECUTA LA CLAUSURA POR PRIMERA VEZ
+
+	...
+	const contador1 = crearContador();
+	//contador();
+	...
+
+
+AL SER UNA NUEVA INVOCACION DE FENCION SE CREA UN NUEVO CONTEXTO DE EJECUCION PARA LA MISMA 
+
+						////FASE DE CREACION////
+							
+
+1. Carga de info importante
+		
+		_nombre del archivo
+		_linea de la proxima instruccion
+		_el valor de this:window
+		_arguments : {...}
+		
+
+
+2. Creacion del entorno lexico
+
+	return function incrementar(){
+	 contador++;
+	 return contador;
+ 	};
+	}
+
+	-no hay variables declaradas
+	aqui que el ENTORNO LEXICO va a estar vacio
+	
+	
+ ___________________________
+|ENTORNO LEXICO  	ext:|➪ crearContador()
+|___________________________|		↓
+|	         |          |  	 el entorno exterior ya venia vinculado
+				porque era una clausura.
+				
+	
+3. SE COLOCA EN LA PILA SE EJECUCION
+
+
+
+
+
+	
+	
+						////FASE DE EJECUCION////
+						
+						
+...
+return function incrementar(){
+	 contador++;		   ←		1
+	 return contador;
+ 	};
+	}
+							
+	
+
+
+1.
+/contador++;	
+
+AL NO ENCONTRAR ESTA VARIABLE EN EN ENTORNO LOCAL JS VA A BUSCARLA SIGUIENDO LA CADENA DE SCOPES
+
+
+
+incrementar()  →     ext:crearContenido()   →    ext:GLOBAL
+    							/clousure
+    
+ENCONTRANDOLO EN EN SU ENTRONO LEXICO EXTERIOR (crearContenido())
+
+ENTONCES ACTUALIZA SU VALOR SOBRE ESTE ENTORNO LEXICO
+
+
+entorno crearContenido()
+ ___________________________
+|ENTORNO LEXICO  	ext:|
+|___________________________|		AHORA ESTE ES SU VALOR ACTUAL
+|contador   |       1       |
+____________|_______________|
+
+
+
+
+2. RETORNO
+/return contador;
+
+-Como estamos retornando un numero, se retorna una copia de este numero+
+
+-Como se trata de una sentencia de retorno
+EL CONTEXTO DE EJECUCION SALE DE LA PILA DE EJECUCION
+
+Y SE CONTINUA EJECUTANDO LAS SIGUIENTE INSTRUCCION.
+
+
+	
+	
+					////TERMINA FASE DE EJECUCION////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+VI. SE EJECUTA LA CLAUSURA POR SEGUNDA VEZ
+
+					////FASE DE CREACION////
+					////FASE DE EJECUCION////
+					////TERMINA FASE DE EJECUCION////
+
+
+OCURRE LO MISMO QUE EN LA EJECUCION ANTERIOR PERO AHORA TRAS LA SUMA 
+
+
+
+
+
+entorno crearContenido()
+ ___________________________
+|ENTORNO LEXICO  	ext:|
+|___________________________|		AHORA ESTE ES SU VALOR ACTUAL
+|contador   |       2       |
+____________|_______________|
+
+
+
+Y EN LAS PROXIMAS EJECUCIONES LO MISMO...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+V.  SE VUELVE A INVOCAR A LA FUNCION GRANDE PERO CON OTRA VARIABLE
+
+/const contador2 = crearContrador();
+
+
+Para ejecutarlo JS detecta una invocacion de variable, por eso crea un nuevo 
+CONTEXTO DE EJECUCION
+
+
+Y ES UNO NUEVO. NO REUTILIZA EL CONTEXTO DE EJECUCION QUE SE UTILIZO EN LA EJECUCION ANTERIOR.
+
+
+///////////////////////////////////
+"CADA VEZ QUE SE EJECUTA UNA FUNCION EN JS  SE CREA UN NUEVO CONTEXTO DE EJECUCION CON UN NUEVO ENTORNO LEXICO"	
+				     ///////////////////////////////////
+				     
+				     
+				     
+				     
+				     
+				     
+				     ////FASE DE CREACION////
+				     
+
+1. Carga de info importante
+		
+		_nombre del archivo
+		_linea de la proxima instruccion
+		_el valor de this:window
+		_arguments : {...}
+		
+		
+
+2. creacion de un entorno lexico
+
+...
+
+
+////////////////////////////////////
+OCURRE EXACTAMENTE LO QUE PASÓ 
+ EN EL PUNTO
+ 
+ ---	II.  EJECUTANDO LA ASIGNACIÓN DE VARIABLE
+ 
+ PERO RECORDANDO QUE SE VA A CREAN UN ENTORNO DE EJECUCION COMPLETAMENTE DISTINTO QUE EL QUE SE CREO EN ESTE PUNTO 
+ 
+					////////////////////////////////////
+					
+				
+				
+				
+////////////////////////////////////				
+COMO CADA CONTADOR FUE CREADO EN ENTORNOS DISTINTOS SOLO PUEDEN SER MODIFICADOS POR LAS FUNCIONES QUE  PUEDEN  A CADA UNO DE ESOS ENTORNOS			
+					///////////////////////////////
+				
+				
+				
+YA QUE INCREMENTAR2(). NO ESTÁ CONECTADO CON CLOUSURE A CREARCONTADOR()
+POR TANTO NO PUEDE ACCEDER NI CAMBIAR EL VALOR DEL LA OTRA FUNCION CON LA CUAL NO ESTA CONECTADA. COSA QUE SI PODRIA HACER CON SU CONTEXTO EXTERIOR. YA QUE ESTAN CONECTADOS POR CLOUSURE.
+					
+					
+					
+...........................................................................................................................................................				
+...........................................................................................................................................................				
+...........................................................................................................................................................				
+										
+					
+					
+					
+				
+				
+					
+			
+			
+			
+					
+					
+					
+					
+
+
+
+
+------------UTILIDADES DE UN CLOUSURE EN JS--------------------------
+
+
+
+
+
+
+(((1)))
+
+
+LAS VARIABLES CREADAS DENTRO DE ESTOS ENTORNOS SOLO PODRAN SER MODIFICADAS
+POR LAS FUNCIONES QUE PUEDEN  ACCEDER A CADA UNO DE SUS ENTRONOS.
+
+
+1. proteger el acceso a las variables
+
+..
+PODRIAMOS HACER EL MISMO EJEMPLO QUE ACABAMOS DE HACER SIN CLOUSURES
+(creando una variable en el global y cambiar su valor)
+
+PERO SOLO SE VA A PODER TENER UNA VARIABLE EN TODO EL CODIGO CON ESE NOMBRE
+..
+
+con el clousure podremos crear diferentes contextos, que pueden usar el mismo nombre de variable, y sin modificarse unos a otros. 
+..
+
+
+function crearContador(){
+
+let contador = 0;
+return function incrementar(){
+	contador++;
+	return contador;
+ };
+}
+
+const contador1 = crearContador();
+contador1();
+contador1();
+
+//en este ejemplo la unica forma que tienes de acceder a contador, es incrementandolo.
+(si se usa ese nombre en otro lado, no será esta variable)
+y cuando lo hagas te devuelve el valor incrementado.
+
+
+////PERO TAMBIEN PODEMOS AÑADIR UNA OPCION PARA QUE NOS MANDE EL VALOR ACTUAL DE LA VARIABLE, QUE LE HAGA UNA SUMA O QUE LE RESTE////
+
+
+en js podemos hacer return de un objeto, y PODEMOS PEDIR A UNA FUNCION SOLO EL ALGUNA PROPIEDAD DE ESE OBJETO.
+
+asimismo encapsularemos las funciones de suma, resta o muestra para que se la pidamos al clousure.
+
+
+[
+function crearContador(){
+
+    let contador = 0;
+    return {
+        incrementar:function incrementar(){
+            contador++;
+            return contador;
+     },
+        decrementar:function incrementar(){
+            contador--;
+            return contador;
+         },
+        mostrar:function incrementar(){
+            return contador;
+         },
+    }
+    }
+    
+const contador1 = crearContador();
+contador1.incrementar();
+contador1.decrementar();
+contador1.mostrar();
+]
+			#recordemos que contador1 es un objeto con funciones
+			asi que llamamos a las keys de estas funciones para
+			poder ejecutarlas
+			
+
+
+Y SI, CADA UNO DE LOS VALORES ES UN CLOUSURE, YA QUE SON FUNCIONES SEPARADAS PERO QUE USAN UNA VARIABLE DE UN ENTORNO EXTERIOR,  contador
+
+
+
+
+
+
+
+
+
+
+
+(((2)))
+
+LAS API EN JS:
+es la interfaz que tiene un objeto para interactual con el mismo,
+que metodos podemos invocr sobre ese objeto y a que propiedades internas nos permite acceder.
+
+
+las CLOUSURES son muy buenas para construir estas apis, para decir de que maneras podemos interactuar con un objeto, pero protegiendo el acceso a las variables internas
+
+	#en el ejemplo por ejemplo, no podremos modificar el valor de contador
+	y colocarlo en 500 desde otro escope,
+	porque la clousure no lo permite. 
+	solo permite incrementar el valor de 1++, restar 1-- y mostrar el 
+	valor, solo eso.
+
+
+
+
+
+
+
+(((3)))
+FABRICA DE FUNCIONES
+
+osea que como en nuestro ejemplo podemos usar una misma funcion pero con diferentes valores, PODEMOS HACER UNA FUNCION EN NUESTRO EJEMPLO, A LA QUE LE DIGAMOS EN QUE NUMERO QUEREMOS QUE EMPIEZE.
+
+
+#los parametros que recibn las funciones actuan como variables locales de cada entorno, osea que lo podemos usar para el clousure.
+
+[
+function crearContador(contador = 0){
+    return {
+        incrementar:function incrementar(){
+            contador++;
+            return contador;
+     },
+        decrementar:function incrementar(){
+            contador--;
+            return contador;
+         },
+        mostrar:function incrementar(){
+            return contador;
+         },
+    }
+    }
+    
+const contador1 = crearContador(500);
+contador1.incrementar();
+contador1.decrementar();
+contador1.mostrar();
+]
+	
+	
+	AHORA SI LE PODREMOS DECIR EN QUÉ NUMERO QUEREMOS QUE EMPIEZE.
+	
+	pero eso solo será para ese entorno lexico. podras restarle 1- a 500
+	o sumarle 1 a 500.
+	
+	LA FUNCION SIEMPRE VA A SER LA MISMA, PERO AHORA LE PODEMOS DECIR 
+	EN QUE NUMERO QUEREMOS QUE PARTA LA CUENTA.
+	
+	
+	
+
+<<<<PARTIMOS DE UN MOLDE, Y LE AGREGAMOS COSITAS PERSONALIZADAS>>>>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------
+
+
+
+
+
+PERO ESTA NO ES LA UNICA FORMA DE HACER UN CLOUSURE EN JS
+
+ESTE ES UN EJEMPLO QUE EXPLICA BIEN COMO SE TRABAJA CON LOS CLOUSURES
+
+
+Algunas de las formas más comunes de crear "closures" incluyen:
+
+
+
+
+ 1.   Funciones anidadas: Como se ha mostrado en ejemplos anteriores, una función declarada dentro de otra función (función anidada) automáticamente forma un "closure" al retener una referencia al entorno léxico de la función externa.
+
+
+
+
+ 2.   Retorno de funciones: Cuando una función devuelve otra función como resultado, la función devuelta puede ser un "closure" que retiene el entorno léxico de la función que la contiene.
+
+javascript
+
+function creaClosure(valor) {
+  return function() {
+    console.log(valor);
+  };
+}
+
+
+
+3.    Callbacks: Cuando pasas una función como argumento a otra función y esa función pasada como argumento accede a variables en el entorno léxico de la función que la llama, se forma un "closure". Esto es común en situaciones como el manejo de eventos.
+
+
+
+ 4.   Expresiones de función inmediatamente invocadas (IIFE): Algunas veces, se utilizan IIFE para crear "closures" inmediatos, encapsulando variables y funciones en un entorno léxico privado.
+
+javascript
+
+var miClosure = (function() {
+  var variablePrivada = "Soy privada";
+  return function() {
+    console.log(variablePrivada);
+  };
+})();
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+

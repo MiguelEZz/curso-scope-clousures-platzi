@@ -1,0 +1,165 @@
+EL HOISTING 
+
+
+ocurre cada vez que se crea un contexto de ejecucion nuevo
+
+
+"CADA VEZ QUE SE EJECUTA UNA FUNCION EN JAVASCRIPT, SECREA UN NUEVO CONTEXTO DE EJECUCION"
+
+al comenzar este contexto de ejecucion ocurren:
+
+1) FASE DE CREACION
+	
+	a) inicializacion
+		-nombre del archivo
+		-linea de codigo 
+		-obj global:window
+		-this: window   "no estrict"
+		
+	b) entorno lexico
+		//ESTE ES EL HOISTING
+		es un objeto que guarda el nombre de las 
+		variables y sus valores
+		o el nombre de las funciones y toda la
+		funcion
+		
+		
+ ___________________________
+|ENTORNO LEXICO  	ext:| ➪  contexto exterior
+|___________________________|	
+|variable   |     undefind  |
+ func		fuc(){...}
+____________|_______________|		
+
+
+2) FASE DE EJECUCION
+
+	donde se pasa a asignar y ejecutar las variables y funciones que
+	previamente ya se guardaron en el entorno lexico
+	
+	_ES POR ESTO QUE CUANDO LLAMAMOS UNA VARIABLE LET ANTES DE ASIGNARLE 
+	UN VALOR,   NOS DEVUELVE "UNDEFINED", YA QUE ES SU VALOR 
+	PREDETERMINADO. 
+	
+	_ES POR ESTO QUE SI EJECUTAMOS UNA FUNCION ANTES DE DECLARARLA EN EL
+	CODIGO, SI FUNCIONA, YA QUE ESTA SE CARGA POR COMPLETO EN EL
+	ENTORNO LEXICO, ANTES DE EJECUTARLE EL PROGRAMA.
+	
+		↓
+		
+		↓
+		
+		↓
+	pero esto tiene truco
+		↓
+		
+POINT😍️
+
+FUNCIONES EXPRESIVAS Y FUNCIONES DECLARATIVAS
+
+¿porque las funciones declarativas si les aplica el hoisting y a las expresivas no?
+
+
+
+
+///////////////////
+FUNCION DECLARATIVA
+
+	es declarativa cuando declaramos la funcion autonoma
+	
+	...
+	console.log(suma(2,3));
+	
+	function suma(a, b) {
+  		  return a + b;
+	}
+	...
+	
+esta funcion se carga en el ENTORNO LEXICO por completo
+ya que asi maneja JS las funciones
+
+
+
+
+
+
+/////////////////
+FUNCION EXPRESIVA
+
+	es expresiva cuando es una funcion asignada a una variable
+
+	...
+	console.log(resta(5, 2)); 
+	
+	var resta = function(a, b) {		//ERROR
+    		return a - b;
+	};
+	...
+	
+
+El hoisting se encarga de cargar al ENTORNO LEXICO las VARIABLES con un valor INDEFINIDO
+
+a diferencia de las funciones que se cargan por completo en el ENTORNO LEX
+las variables cargan solo su nombre, su valor queda UNDEFINED
+
+ENTONCES EL VALOR DE ESTA VARIABLE resta SE CARGA COMO UNDEFINED, NO COMO UNA FUNCIÓN,  por eso es que arroja error.  no se puede ejecutar.
+
+undefined no es funcion. no tiene undefined()
+
+
+
+---------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////
+  PERO CUANDO ESTAMOS HABLANDO DE HOISTING A VARIABLES ES SOLO PARA "VAR"
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+LAS DECLARACIONES DE VARIABLES COMO 
+
+		LET   CONST
+
+SE VAN AL "TEMPORAL DEAD ZONE" que es similar al hoisting, pero este encambio
+no le da un valor de "undefined" a la var, sino que los muestra como "no definidos"  
+
+Y SI LOS LLAMAMOS ANTES DE ASIGNARLE VALOR, NOS APARECERÁ ERROR
+
+00
+todas las variables let y const, al ejecutar su funcion se carga solo su inicializacion.
+
+y está en su zona muerta temporal hasta que se le asigne un valor.
+
+SI SE LLAMA A ESTA VARIABLE MIENTRAS ESTÁ EN SU ZONA MUESTA TEMPORAL
+NOS MANDARÁ UN ERROR
+00
+
+
+´
+caso raro
+
+//let nombre = nombre;
+
+a esta variable le estamos asignando el mismo valor que tiene
+"cuando trate de asignarle el valor de va a dar cuenta que se le esta asignando una variable no inicializada ya que aun no se le asigno un valor"
+arrojara un error
+
+
+---------------------------------------------------------------------------
+
+
+
+
+			////////
+			HOISTING
+			////////
+			
+			
+	VAR		sube solo la declaracion
+	FUNCTION	se sube completo 
+	IMPORT		se sube completo
+	CLASS		no se sube nada
+	
+
+LAS DECLARACIONES DE LET Y CONST, TAMBIEN SE ELEVAN, PERO A UN AREA QUE SE LLAMA
+		TEMPORAL DEAD ZONE
+		
+

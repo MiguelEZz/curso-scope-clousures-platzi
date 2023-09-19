@@ -1,0 +1,31 @@
+DEBUGGER;
+
+es la palabra reservada que tienen los navegadores para hacer un debugging de nuestro programa
+
+
+var a = "hello";
+
+function hello(){
+    let b = "hello world";
+    const c = "hello world";
+    debugger;
+}
+
+hello()
+
+
+solo hace falta colocar la palabra reservada  "debugger"
+dentro de algun bloque,
+
+_ESTO DETENDRÁ EL PROGRAMA PARA QUE NO SE SIGA EJECUTANDO HASTA 	QUE TU DECIDAS CONTINUAR
+
+_TE MOSTRARÁ INFORMACION IMPORTANTE SOBRE EL ESTADO DE ESE BLOQUE Y DE PROGRAMA QUE YA REPASAMOS
+	scope
+	breackpoint
+	call stack
+	XHR/fetch Breackpoint
+	DOM breackpoints
+	Global Listeners
+	Event Listener Breackpoints
+	CSP Violation Breackpoints
+	
